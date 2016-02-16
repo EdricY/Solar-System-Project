@@ -8,4 +8,5 @@ TO DO:
   - Scale correctly when resizing window.
   - Directional scrolling.
   - Change units for readability (AU?)
+  - Fix period
   - Interactivity?
