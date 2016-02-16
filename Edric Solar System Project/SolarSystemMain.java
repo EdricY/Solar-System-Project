@@ -19,7 +19,7 @@ public class SolarSystemMain extends JPanel
     boolean[] planetDescVisible = new boolean[6];
     //x, y, velX, velY, mass, diameter, color, orbitspeed
     //Planet m1 = new Moon(780, 400, 0, 2.6, 99, 6, Color.GREEN, 200);
-    Planet s = new Planet(600, 400, 0, 0, 1000, 25, new Color(225,125,25), 0);
+    Planet s = new Planet(600, 400, .1, 0, 1000, 25, new Color(225,125,25), 0);
     double scale = 1;
     boolean paused = false;
     BufferedImage[] bimgs = new BufferedImage[6];
@@ -36,7 +36,7 @@ public class SolarSystemMain extends JPanel
           canvas = new GameCanvas();
           canvas.setPreferredSize(new Dimension(1200, 800));
           add(canvas);
-            planets[0] = new Planet(600, 450, -4.7, 0, 999, 8, Color.RED, 1000);
+            planets[0] = new Planet(600, 450, -4.7, -3, 999, 8, Color.RED, 1000);
             planets[1] = new Planet(752, 400, 0, 2.5, 999, 12, Color.BLUE, 1000);
             planets[2] = new Planet(600, 150, 1.8, 0, 999, 11, Color.ORANGE, 2000);
             planets[3] = new Planet(600, -100, 1.2, 0, 999, 7, Color.GRAY, 2000);
@@ -146,9 +146,10 @@ public class SolarSystemMain extends JPanel
             // detect collisions and provide responses.
             if (!paused)
             {
+                s.move();
                 for(int i = 0; i < planets.length-1; i++)
                 {
-                    planets[i].update(600,400,s.getMass());
+                    planets[i].update(s.getX(),s.getY(),s.getMass());
                 }
             }
          // Refresh the display
@@ -195,7 +196,7 @@ public class SolarSystemMain extends JPanel
             p.draw(g,scale);
          for (int i = 0; i < planets.length; i++)
          {
-             if (planetDescVisible[i])
+             if (planets[i].getDescVisible())
                 planets[i].dispDesc(g,scale);
          }
          if (selected > -1)
@@ -228,15 +229,14 @@ public class SolarSystemMain extends JPanel
       @Override
       public void keyTyped(KeyEvent e) { }
       @Override
-      public void mousePressed(MouseEvent e) {
-      }
+      public void mousePressed(MouseEvent e) { }
       public void mouseReleased(MouseEvent e) {
           for(int i = 0; i < planets.length; i++)
               if (planets[i].containsPt(e.getX(), e.getY(), scale))
               {
                   
-                  planetDescVisible[i] = !planetDescVisible[i];
-                  if(planetDescVisible[i])
+                  planets[i].setDescVisible(!planets[i].getDescVisible());
+                  if(planets[i].getDescVisible())
                     selected = i;
                   else 
                     selected = -1;

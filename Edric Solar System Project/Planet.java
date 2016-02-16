@@ -15,8 +15,9 @@ public class Planet
     double accel, dirX, dirY;
     double dist, closest=999, furthest=0;
     int period, pcounter;
-
-
+    boolean descVisible;
+    int pathPts[][] = new int[500][2];
+    int pathCounter = 0;
     /**
      * Constructor for objects of class Planet
      */
@@ -36,6 +37,8 @@ public class Planet
     public double getY(){return y;}
     public int getMass(){return mass;}
     public int getDiameter(){return diameter;}
+    public boolean getDescVisible() {return descVisible;}
+    public void setDescVisible(boolean b) {descVisible = b;}
     public boolean containsPt(int x, int y, double scale)
     {
         return (x>600+(getX()-diameter-600)*scale && x<600+(getX()+diameter-600)*scale && 
@@ -47,20 +50,37 @@ public class Planet
      * @param  y   a sample parameter for a method
      * @return     the sum of x and y 
      */
-    public void update(int StarX, int StarY, int StarMass)
+    
+    public void move()
     {
+        x += velX;
+        y += velY;
+    }
+    
+    public void update(double StarX, double StarY, int StarMass)
+    {
+        if (descVisible){
+            pathPts[pathCounter][0]=(int)(x+.5);
+            pathPts[pathCounter][1]=(int)(y+.5);
+            pathCounter = (pathCounter+1)%500;
+        }
+        else{
+            pathPts = new int[500][2];
+            pathCounter = 0;
+        }
         dist = Math.sqrt((StarX - x)*(StarX - x) + (StarY - y)*(StarY - y));
         closest = Math.min(dist,closest);
         furthest = Math.max(dist,furthest);
+        
         accel = StarMass/dist/dist;
-
+        //accel = Math.sqrt((dirX*dirX + dirY*dirY));
+        
         dirX = (StarX-x)/dist;
         dirY = (StarY-y)/dist;
-        //double a = Math.sqrt((dirX*dirX + dirY*dirY));
+        
         velX += dirX * accel;
         velY += dirY * accel;
-        x += velX;
-        y += velY;
+        move();
         pcounter += 1;
         if(x>600 && velX > 0 && x-velX<600)
         {
@@ -76,8 +96,12 @@ public class Planet
     }
     public void dispDesc(Graphics g, double scale)
     {
+        g.setColor(color);
+        for (int[] a : pathPts)
+            g.drawLine(a[0],a[1],a[0],a[1]);
         g.setFont(new Font("Dialog", Font.PLAIN, 16));
         g.setColor(Color.YELLOW);
+        
         g.drawString("Distance from star: " + (Math.round(dist*100.0)/100.0) * 1000000 + " kilometers", 
                     diameter+(int)(600+(x-diameter/2-600)*scale), 16+(int)(400+(y-diameter/2-400)*scale)+diameter);
         if(closest < 999)
