@@ -10,3 +10,4 @@ TO DO:
   - Change units for readability (AU?)
   - Fix period
   - Interactivity?
+  - Path zoom compatibility
